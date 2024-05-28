@@ -4,9 +4,9 @@ const Product = require("./product.model");
 
 const UserSchema = new Schema({
   name: { type: String, required: "Please enter a name", unique: true },
-  password: { type: String, required: "Please enter a password", unique: true },
+  password: { type: String, required: "Please enter a password" },
   email: { type: String, required: "Please enter an email", unique: true },
-  contactNumber: [{ type: String, unique: true }],
+  contactNumber: [{ type: String }],
   address: [
     {
       houseNo: { type: String },
@@ -36,3 +36,7 @@ const UserSchema = new Schema({
 
   refreshToken: { type: String },
 });
+
+const User = mongoose.model("User", UserSchema);
+
+module.exports = { User };

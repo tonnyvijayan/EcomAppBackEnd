@@ -17,8 +17,12 @@ const UserSchema = new Schema({
       pincode: { type: Number },
     },
   ],
+
   cartItems: [
-    { type: Schema.Types.ObjectId, ref: "Product", quantity: { type: Number } },
+    {
+      _id: { type: Schema.Types.ObjectId, ref: "Product" },
+      quantity: { type: Number },
+    },
   ],
   wishlist: [{ type: Schema.Types.ObjectId, ref: "Product" }],
   orders: [

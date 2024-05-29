@@ -1,0 +1,115 @@
+const { User } = require("../models/user.model");
+
+const fetchCart = async (req, res) => {
+  const userName = "bula";
+  const userCartItems = await User.find({ name: userName }).populate(
+    "cartItems._id"
+  );
+  res.json({ userCartItems });
+};
+
+const addToCart = async (req, res) => {
+  try {
+    const { productId } = req.body;
+    const userName = "bula";
+    const [userDetails] = await User.find({ name: userName });
+
+    const [productInCart] = userDetails.cartItems.filter((item) => {
+      console.log(item._id, productId);
+      return item._id.toString() === productId;
+    });
+    console.log(productInCart);
+    if (productInCart) {
+      return res.status(409).json({ message: "Product already in cart" });
+    }
+    userDetails.cartItems.addToSet({ _id: productId, quantity: 1 });
+    const updatedUserDetails = await userDetails.save();
+    res.json({ updatedUserDetails });
+  } catch (error) {
+    res.json(error);
+  }
+};
+
+const removeFromCart = async (req, res) => {
+  try {
+    const { productId } = req.body;
+    const userName = "bula";
+
+    const [user] = await User.find({ name: userName });
+
+    const cartItems = user.cartItems.map((item) => item._id.toString());
+
+    if (!cartItems.includes(productId)) {
+      return res.status(404).json({ message: "Product doesn't exist in cart" });
+    }
+
+    const updatedUserCartItems = user.cartItems.filter(
+      (item) => item._id.toString() !== productId
+    );
+
+    user.cartItems = updatedUserCartItems;
+    await user.save();
+    res.status(200).json({ message: "Item removed" });
+  } catch (error) {
+    res.status(500).json({ message: "Unable to remove product" });
+  }
+};
+
+const increaseItemQuantity = async (req, res) => {
+  try {
+    const userName = "bula";
+    const { productId } = req.body;
+    const [user] = await User.find({ name: userName });
+
+    if (
+      !user.cartItems.map((item) => item._id.toString()).includes(productId)
+    ) {
+      return res.status(404).json({ message: "Product doesn't exist in cart" });
+    }
+    const updatedUserCart = user.cartItems.map((item) => {
+      return item._id.toString() === productId
+        ? { ...item, quantity: item.quantity + 1 }
+        : item;
+    });
+
+    user.cartItems = updatedUserCart;
+    await user.save();
+    res.status(201).json({ message: "quantity increased" });
+  } catch (error) {
+    res.status(500).json({ message: "unable to increase quantity" });
+  }
+};
+
+const decreaseItemQuantity = async (req, res) => {
+  try {
+    const userName = "bula";
+    const { productId } = req.body;
+    const [user] = await User.find({ name: userName });
+
+    if (
+      !user.cartItems.map((item) => item._id.toString()).includes(productId)
+    ) {
+      return res.status(404).json({ message: "Product doesn't exist in cart" });
+    }
+
+    const updatedUserCart = user.cartItems.map((item) => {
+      return item._id.toString() === productId
+        ? { ...item, quantity: item.quantity > 1 ? item.quantity - 1 : 1 }
+        : item;
+    });
+
+    user.cartItems = updatedUserCart;
+    await user.save();
+    res.status(201).json({ message: "quantity decreased" });
+  } catch (error) {
+    res.status(500).json({ message: "unable to decrease item quantity" });
+  }
+};
+
+module.exports = {
+  fetchCart,
+  addToCart,
+  removeFromCart,
+  increaseItemQuantity,
+  decreaseItemQuantity,
+};

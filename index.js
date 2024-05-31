@@ -3,6 +3,8 @@ const express = require("express");
 const app = express();
 const bodyParser = require("body-parser");
 const cookieParser = require("cookie-parser");
+const cors = require("cors");
+const corsOptions = require("./cors/cors");
 const initializeDbConnection = require("./db/intializeDbConnection");
 const errorHandler = require("./middlewares/errorHandler");
 const routeNotFound = require("./middlewares/routeNotFound");
@@ -12,6 +14,7 @@ const { logger } = require("./middlewares/logger");
 const PORT = process.env.PORT;
 initializeDbConnection();
 
+app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(cookieParser());
 app.use(logger);

@@ -28,4 +28,8 @@ router.route("/addtowishlist").post(wishlistController.addToWishlist);
 
 router.route("/removefromwishlist").post(wishlistController.removeFromWishlist);
 
+////
+
+router.route("/mergecart").post(cartController.mergeCart);
+
 module.exports = router;

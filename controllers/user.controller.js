@@ -73,7 +73,7 @@ const authenticateUser = async (req, res) => {
         maxAge: 2 * 60 * 1000,
       });
 
-      res.status(200).json({ verifyPassword, accessToken, refreshToken });
+      res.status(200).json({ accessToken });
     } else {
       res.status(403).json({ message: "User authentication failed" });
     }

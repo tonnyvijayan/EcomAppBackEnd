@@ -2,12 +2,37 @@ const { User } = require("../models/user.model");
 
 const fetchCart = async (req, res) => {
   const userName = "bula";
-  const userCartItems = await User.find({ name: userName }).populate(
-    "cartItems._id"
-  );
-  res.json({ userCartItems });
+  const [user] = await User.find({ name: userName });
+  res.json({ cartItems: user.cartItems });
+};
+/////////////////
+
+const mergeCart = async (req, res) => {
+  const userName = "bula";
+  const { clientCartItems } = req.body;
+  const [user] = await User.find({ name: userName });
+  const dbCartItems = user.cartItems;
+  console.log(clientCartItems, dbCartItems);
+
+  const cartToBeMerged = [
+    ...clientCartItems,
+    ...dbCartItems.map((item) => {
+      return { _id: item._id.toString(), quantity: item.quantity };
+    }),
+  ];
+
+  const mergedCartItems = cartToBeMerged.reduce((acc, item) => {
+    const [itemExist] = acc.filter((accItem) => accItem._id === item._id);
+    !itemExist ? acc.push(item) : (itemExist.quantity += item.quantity);
+    return acc;
+  }, []);
+
+  console.log("updated cart", cartToBeMerged, mergedCartItems);
+
+  res.json({ message: "received" });
 };
 
+/////////////////////////
 const addToCart = async (req, res) => {
   try {
     const { productId } = req.body;
@@ -108,6 +133,7 @@ const decreaseItemQuantity = async (req, res) => {
 
 module.exports = {
   fetchCart,
+  mergeCart,
   addToCart,
   removeFromCart,
   increaseItemQuantity,

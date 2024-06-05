@@ -14,6 +14,8 @@ router.route("/refresh").get(userController.refresh);
 
 router.route("/fetchcart").get(cartController.fetchCart);
 
+router.route("/mergecart").post(cartController.mergeCart);
+
 router.route("/addtocart").post(cartController.addToCart);
 
 router.route("/removefromcart").post(cartController.removeFromCart);
@@ -27,9 +29,5 @@ router.route("/fetchwishlist").get(wishlistController.fetchWishlist);
 router.route("/addtowishlist").post(wishlistController.addToWishlist);
 
 router.route("/removefromwishlist").post(wishlistController.removeFromWishlist);
-
-////
-
-router.route("/mergecart").post(cartController.mergeCart);
 
 module.exports = router;

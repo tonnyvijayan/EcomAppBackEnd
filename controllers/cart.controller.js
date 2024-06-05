@@ -2,17 +2,15 @@ const { User } = require("../models/user.model");
 
 const fetchCart = async (req, res) => {
   const userName = "bula";
-  const [user] = await User.find({ name: userName });
+  const [user] = await User.find({ name: userName }).populate("cartItems._id");
   res.json({ cartItems: user.cartItems });
 };
-/////////////////
 
 const mergeCart = async (req, res) => {
   const userName = "bula";
   const { clientCartItems } = req.body;
   const [user] = await User.find({ name: userName });
   const dbCartItems = user.cartItems;
-  console.log(clientCartItems, dbCartItems);
 
   const cartToBeMerged = [
     ...clientCartItems,
@@ -27,12 +25,14 @@ const mergeCart = async (req, res) => {
     return acc;
   }, []);
 
-  console.log("updated cart", cartToBeMerged, mergedCartItems);
+  user.cartItems = mergedCartItems;
+  const updatedUserDetails = await user.save();
 
-  res.json({ message: "received" });
+  res
+    .status(201)
+    .json({ message: "received", cartItems: updatedUserDetails.cartItems });
 };
 
-/////////////////////////
 const addToCart = async (req, res) => {
   try {
     const { productId } = req.body;
@@ -40,18 +40,17 @@ const addToCart = async (req, res) => {
     const [userDetails] = await User.find({ name: userName });
 
     const [productInCart] = userDetails.cartItems.filter((item) => {
-      console.log(item._id, productId);
       return item._id.toString() === productId;
     });
-    console.log(productInCart);
+
     if (productInCart) {
       return res.status(409).json({ message: "Product already in cart" });
     }
     userDetails.cartItems.addToSet({ _id: productId, quantity: 1 });
-    const updatedUserDetails = await userDetails.save();
-    res.json({ updatedUserDetails });
+    await userDetails.save();
+    res.status(201).json({ message: "Product added to cart" });
   } catch (error) {
-    res.json(error);
+    res.status(500).json({ message: "Unable to add products to cart" });
   }
 };
 

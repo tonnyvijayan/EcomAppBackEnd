@@ -3,7 +3,7 @@ const { User } = require("../models/user.model");
 const fetchWishlist = async (req, res) => {
   try {
     const userName = "bula";
-    const [user] = await User.find({ name: userName }).populate("wishlist");
+    const [user] = await User.find({ name: userName });
     res.status(200).json({ userWishlist: user.wishlist });
   } catch (error) {
     res.status(500).json({ message: "unable to fetch user wishlist" });

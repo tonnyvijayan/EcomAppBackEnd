@@ -56,21 +56,21 @@ const authenticateUser = async (req, res) => {
 
     if (verifyPassword) {
       const accessToken = jwt.sign({ name: user.name }, accessTokenSigningKey, {
-        expiresIn: "2m",
+        expiresIn: "1m",
       });
 
       const refreshToken = jwt.sign(
         { name: user.name },
         refreshTokenSigningKey,
         {
-          expiresIn: "2m",
+          expiresIn: "4m",
         }
       );
       user.refreshToken = refreshToken;
       await user.save();
       res.cookie("jwt", refreshToken, {
         httpOnly: true,
-        maxAge: 2 * 60 * 1000,
+        maxAge: 4 * 60 * 1000,
       });
 
       res.status(200).json({ accessToken });
@@ -103,7 +103,7 @@ const logout = async (req, res) => {
 
 const refresh = async (req, res) => {
   const cookies = req.cookies;
-
+  console.log("hit refres", cookies);
   if (!cookies.jwt) {
     return res.status(401).json({ message: "Unauthorized" });
   }
@@ -124,7 +124,7 @@ const refresh = async (req, res) => {
         const newAccessToken = await jwt.sign(
           { name: decoded.name },
           accessTokenSigningKey,
-          { expiresIn: "2m" }
+          { expiresIn: "1m" }
         );
 
         res.status(201).json({ accessToken: newAccessToken });

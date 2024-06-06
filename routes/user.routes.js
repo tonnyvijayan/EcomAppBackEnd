@@ -3,6 +3,7 @@ const router = express.Router();
 const userController = require("../controllers/user.controller");
 const cartController = require("../controllers/cart.controller");
 const wishlistController = require("../controllers/wishlist.controller");
+const verifyJwt = require("../middlewares/verifyJwt");
 
 router.route("/createuser").post(userController.createUser);
 
@@ -12,22 +13,35 @@ router.route("/logout").get(userController.logout);
 
 router.route("/refresh").get(userController.refresh);
 
-router.route("/fetchcart").get(cartController.fetchCart);
+router.route("/fetchcart").get(verifyJwt, cartController.fetchCart);
 
-router.route("/mergecart").post(cartController.mergeCart);
+router.route("/mergecart").post(verifyJwt, cartController.mergeCart);
 
-router.route("/addtocart").post(cartController.addToCart);
+router.route("/addtocart").post(verifyJwt, cartController.addToCart);
 
-router.route("/removefromcart").post(cartController.removeFromCart);
+router.route("/removefromcart").post(verifyJwt, cartController.removeFromCart);
 
-router.route("/increaseitemquantity").post(cartController.increaseItemQuantity);
+router
+  .route("/increaseitemquantity")
+  .post(verifyJwt, cartController.increaseItemQuantity);
 
-router.route("/decreaseitemquantity").post(cartController.decreaseItemQuantity);
+router
+  .route("/decreaseitemquantity")
+  .post(verifyJwt, cartController.decreaseItemQuantity);
 
-router.route("/fetchwishlist").get(wishlistController.fetchWishlist);
+router.route("/fetchwishlist").get(verifyJwt, wishlistController.fetchWishlist);
 
-router.route("/addtowishlist").post(wishlistController.addToWishlist);
+router
+  .route("/addtowishlist")
+  .post(verifyJwt, wishlistController.addToWishlist);
 
-router.route("/removefromwishlist").post(wishlistController.removeFromWishlist);
+router
+  .route("/removefromwishlist")
+  .post(verifyJwt, wishlistController.removeFromWishlist);
+
+router.route("/checkrefresh").get(verifyJwt, (req, res) => {
+  const user = req.user;
+  res.json({ userDetail: user });
+});
 
 module.exports = router;

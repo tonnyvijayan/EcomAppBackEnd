@@ -1,13 +1,13 @@
 const { User } = require("../models/user.model");
 
 const fetchCart = async (req, res) => {
-  const userName = "bula";
+  const userName = req.user;
   const [user] = await User.find({ name: userName }).populate("cartItems._id");
   res.json({ cartItems: user.cartItems });
 };
 
 const mergeCart = async (req, res) => {
-  const userName = "bula";
+  const userName = req.user;
   const { clientCartItems } = req.body;
   const [user] = await User.find({ name: userName });
   const dbCartItems = user.cartItems;
@@ -36,7 +36,7 @@ const mergeCart = async (req, res) => {
 const addToCart = async (req, res) => {
   try {
     const { productId } = req.body;
-    const userName = "bula";
+    const userName = req.user;
     const [userDetails] = await User.find({ name: userName });
 
     const [productInCart] = userDetails.cartItems.filter((item) => {
@@ -57,7 +57,7 @@ const addToCart = async (req, res) => {
 const removeFromCart = async (req, res) => {
   try {
     const { productId } = req.body;
-    const userName = "bula";
+    const userName = req.user;
 
     const [user] = await User.find({ name: userName });
 
@@ -81,7 +81,7 @@ const removeFromCart = async (req, res) => {
 
 const increaseItemQuantity = async (req, res) => {
   try {
-    const userName = "bula";
+    const userName = req.user;
     const { productId } = req.body;
     const [user] = await User.find({ name: userName });
 
@@ -106,7 +106,7 @@ const increaseItemQuantity = async (req, res) => {
 
 const decreaseItemQuantity = async (req, res) => {
   try {
-    const userName = "bula";
+    const userName = req.user;
     const { productId } = req.body;
     const [user] = await User.find({ name: userName });
 

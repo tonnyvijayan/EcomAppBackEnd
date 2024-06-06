@@ -8,6 +8,7 @@ const verifyJwt = async (req, res, next) => {
   if (!token) {
     return res.status(401).json({ message: "Unauthorized access" });
   }
+
   jwt.verify(token, accessTokenSigningKey, async (err, decoded) => {
     if (err) {
       return res

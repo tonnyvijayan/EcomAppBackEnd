@@ -2,7 +2,7 @@ const { User } = require("../models/user.model");
 
 const fetchWishlist = async (req, res) => {
   try {
-    const userName = "bula";
+    const userName = req.user;
     const [user] = await User.find({ name: userName });
     res.status(200).json({ userWishlist: user.wishlist });
   } catch (error) {
@@ -12,7 +12,7 @@ const fetchWishlist = async (req, res) => {
 
 const addToWishlist = async (req, res) => {
   try {
-    const userName = "bula";
+    const userName = req.user;
     const { productId } = req.body;
     const [user] = await User.find({ name: userName });
 
@@ -36,7 +36,7 @@ const addToWishlist = async (req, res) => {
 
 const removeFromWishlist = async (req, res) => {
   try {
-    const userName = "bula";
+    const userName = req.user;
     const { productId } = req.body;
     const [user] = await User.find({ name: userName });
 

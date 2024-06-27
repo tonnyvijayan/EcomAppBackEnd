@@ -2,8 +2,8 @@ const { User } = require("../models/user.model");
 
 const fetchCart = async (req, res) => {
   const userName = req.user;
-  const [user] = await User.find({ name: userName }).populate("cartItems._id");
-  res.json({ cartItems: user.cartItems });
+  const [user] = await User.find({ name: userName });
+  res.status(200).json({ cartItems: user.cartItems });
 };
 
 const mergeCart = async (req, res) => {
@@ -35,7 +35,8 @@ const mergeCart = async (req, res) => {
 
 const addToCart = async (req, res) => {
   try {
-    const { productId } = req.body;
+    const { productId, quantity } = req.body;
+    console.log(quantity);
     const userName = req.user;
     const [userDetails] = await User.find({ name: userName });
 
@@ -46,7 +47,7 @@ const addToCart = async (req, res) => {
     if (productInCart) {
       return res.status(409).json({ message: "Product already in cart" });
     }
-    userDetails.cartItems.addToSet({ _id: productId, quantity: 1 });
+    userDetails.cartItems.addToSet({ _id: productId, quantity: quantity || 1 });
     await userDetails.save();
     res.status(201).json({ message: "Product added to cart" });
   } catch (error) {

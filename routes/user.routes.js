@@ -3,6 +3,7 @@ const router = express.Router();
 const userController = require("../controllers/user.controller");
 const cartController = require("../controllers/cart.controller");
 const wishlistController = require("../controllers/wishlist.controller");
+const orderController = require("../controllers/order.controller");
 const verifyJwt = require("../middlewares/verifyJwt");
 
 router.route("/createuser").post(userController.createUser);
@@ -39,9 +40,6 @@ router
   .route("/removefromwishlist")
   .post(verifyJwt, wishlistController.removeFromWishlist);
 
-router.route("/checkrefresh").get(verifyJwt, (req, res) => {
-  const user = req.user;
-  res.json({ userDetail: user });
-});
+router.route("/placeorder").post(verifyJwt, orderController.placeOrder);
 
 module.exports = router;

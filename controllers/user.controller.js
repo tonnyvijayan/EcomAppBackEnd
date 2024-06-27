@@ -100,7 +100,7 @@ const logout = async (req, res) => {
   res.clearCookie("jwt", { httpOnly: true });
   res.status(200).json({ message: "user logged out " });
 };
-
+//
 const refresh = async (req, res) => {
   const cookies = req.cookies;
   console.log("hit refres", cookies);

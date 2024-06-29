@@ -7,7 +7,6 @@ const refreshTokenSigningKey = process.env.REFRESH_TOKEN_SIGNING_KEY;
 
 const createUser = async (req, res, next) => {
   const { name, password, email } = req.body;
-  console.log(req.body);
 
   try {
     if (!name || !password || !email) {
@@ -36,7 +35,6 @@ const createUser = async (req, res, next) => {
 
     res.status(201).json({ message: "user created" });
   } catch (error) {
-    console.log(error.message);
     res.status(400).json("Unable to create user");
   }
 };
@@ -56,21 +54,23 @@ const authenticateUser = async (req, res) => {
 
     if (verifyPassword) {
       const accessToken = jwt.sign({ name: user.name }, accessTokenSigningKey, {
-        expiresIn: "1m",
+        expiresIn: "2m",
       });
 
       const refreshToken = jwt.sign(
         { name: user.name },
         refreshTokenSigningKey,
         {
-          expiresIn: "4m",
+          expiresIn: "6m",
         }
       );
       user.refreshToken = refreshToken;
       await user.save();
       res.cookie("jwt", refreshToken, {
         httpOnly: true,
-        maxAge: 4 * 60 * 1000,
+        maxAge: 6 * 60 * 1000,
+        sameSite: "none",
+        secure: true,
       });
 
       res.status(200).json({ accessToken });
@@ -84,26 +84,23 @@ const authenticateUser = async (req, res) => {
 
 const logout = async (req, res) => {
   const cookies = req.cookies;
-  console.log(cookies);
   if (!cookies.jwt) {
     res.status(204);
   }
   const refreshToken = cookies.jwt;
   const [user] = await User.find({ refreshToken: refreshToken });
-  console.log(user);
   if (!user) {
-    res.clearCookie("jwt", { httpOnly: true });
+    res.clearCookie("jwt", { httpOnly: true, sameSite: "none", secure: true });
     return res.sendStatus(403);
   }
   user.refreshToken = "";
   await user.save();
-  res.clearCookie("jwt", { httpOnly: true });
+  res.clearCookie("jwt", { httpOnly: true, sameSite: "none", secure: true });
   res.status(200).json({ message: "user logged out " });
 };
-//
+
 const refresh = async (req, res) => {
   const cookies = req.cookies;
-  console.log("hit refres", cookies);
   if (!cookies.jwt) {
     return res.status(401).json({ message: "Unauthorized" });
   }
@@ -124,7 +121,7 @@ const refresh = async (req, res) => {
         const newAccessToken = await jwt.sign(
           { name: decoded.name },
           accessTokenSigningKey,
-          { expiresIn: "1m" }
+          { expiresIn: "2m" }
         );
 
         res.status(201).json({ accessToken: newAccessToken });

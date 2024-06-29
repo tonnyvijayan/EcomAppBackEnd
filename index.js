@@ -10,19 +10,21 @@ const errorHandler = require("./middlewares/errorHandler");
 const routeNotFound = require("./middlewares/routeNotFound");
 const productRouter = require("./routes/product.routes");
 const userRouter = require("./routes/user.routes");
-const { logger } = require("./middlewares/logger");
+// const { logger } = require("./middlewares/logger");
+// const cronJob = require("./cronjob/cronJobs");
 const PORT = process.env.PORT;
 initializeDbConnection();
+// cronJob.start();
 
 app.use(cors(corsOptions));
 app.use(bodyParser.json());
 app.use(cookieParser());
-app.use(logger);
+// app.use(logger);
 app.use("/products", productRouter);
 app.use("/user", userRouter);
 
-app.post("/", (req, res) => {
-  res.json("hello");
+app.get("/serveractivate", (req, res) => {
+  res.status(200).send("Server activated");
 });
 
 app.use(routeNotFound);

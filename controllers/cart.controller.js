@@ -36,7 +36,6 @@ const mergeCart = async (req, res) => {
 const addToCart = async (req, res) => {
   try {
     const { productId, quantity } = req.body;
-    console.log(quantity);
     const userName = req.user;
     const [userDetails] = await User.find({ name: userName });
 

@@ -1,5 +1,5 @@
 const corsOptions = {
-  origin: "https://plantmartapp.netlify.app/",
+  origin: "https://plantmartapp.netlify.app",
   credentials: true,
 };
 

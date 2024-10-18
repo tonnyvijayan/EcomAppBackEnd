@@ -11,10 +11,10 @@ const routeNotFound = require("./middlewares/routeNotFound");
 const productRouter = require("./routes/product.routes");
 const userRouter = require("./routes/user.routes");
 // const { logger } = require("./middlewares/logger");
-// const cronJob = require("./cronjob/cronJobs");
+const cronJob = require("./cronjob/cronJobs");
 const PORT = process.env.PORT;
 initializeDbConnection();
-// cronJob.start();
+cronJob.start();
 
 app.use(cors(corsOptions));
 app.use(bodyParser.json());

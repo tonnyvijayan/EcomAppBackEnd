@@ -1,7 +1,7 @@
 const axios = require("axios");
 const cron = require("node-cron");
 
-const cronJob = cron.schedule("*/20 * * * *", async () => {
+const cronJob = cron.schedule("*/13 * * * *", async () => {
   console.log("cron called");
   try {
     const response = await axios.get(
